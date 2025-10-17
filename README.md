@@ -2,7 +2,7 @@
 
 ## About Laravel reUSEAPI
 
-Laravel reuseAPI is an open-source project that aims to help Laravel programmers by providing a boilerplate template for their APIs, making API Development easier and more efficient. 
+Laravel reuseAPI is an open-source project that aims to help Laravel programmers by providing a boilerplate template for their APIs, making API Development easier and more efficient.
 
 ## Requirements
 
@@ -33,7 +33,7 @@ php artisan key:generate
 php artisan migrate
 
 # Install and configure Sanctum
-php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+php artisan install:api
 
 # Publish Spatie Permission migrations
 php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"

@@ -55,12 +55,23 @@ class MakeService extends Command
      */
     protected function getStub(string $name): string
     {
+        // Extract class name and namespace from the path
+        $parts = explode('/', $name);
+        $className = end($parts); // Get the last part (actual class name)
+        
+        // Build namespace
+        $namespace = 'App\\Services';
+        if (count($parts) > 1) {
+            $subNamespace = implode('\\', array_slice($parts, 0, -1));
+            $namespace .= '\\' . $subNamespace;
+        }
+
         return <<<EOT
 <?php
 
-namespace App\Services;
+namespace {$namespace};
 
-class {$name}
+class {$className}
 {
     // Add your service methods here
 }
