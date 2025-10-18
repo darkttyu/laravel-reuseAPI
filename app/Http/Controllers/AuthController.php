@@ -8,10 +8,12 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
 use App\Http\Requests\Auth\ResetPasswordRequest;
 use App\Http\Requests\Auth\VerifyEmailRequest;
-use App\Http\Services\Auth\LoginService;
+use App\Services\Auth\LoginService;
 
 class AuthController extends Controller
 {
+    protected LoginService $loginService;
+
     public function register(RegisterUserRequest $request)
     {
 
@@ -19,7 +21,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $this->
+        return $this->loginService->login($request);
     }
 
     public function logout()
