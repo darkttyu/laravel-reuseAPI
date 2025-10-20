@@ -1,10 +1,13 @@
 <?php
 
 namespace App\Services\Auth;
+
 use App\Models\User;
+use App\Models\EmailToken;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Traits\ApiResponse;
-use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class LoginService
 {
@@ -25,18 +28,16 @@ class LoginService
 
             $user = User::query()->where('email', $validated['email'])->first();
 
-            if (!$user) {
-                return response->json([
-                    'message' => 'User not Found.',
-                    'error' => ['email' => ['Email does not exist.'] ]
-                ], Response::HTTP_NOT_FOUND);
+            if(!$user) {
+                return $this->errorResponse('User not Found.', 404);
             }
 
-            if(!Hash::check($validated->password . $this->salt, $user->password)) {
-                return response()->json([
-                    'message' => 'Invalid credentials',
-                    'error' => ['password' => ['Wrong password.']]
-                ], Response::HTTP_UNAUTHORIZED);
+            if($user->email_verified_at == null) {
+                return $this->errorResponse('Email not verified.', 401);
+            }
+
+            if(!Hash::check($validated['password'] . $this->salt, $user->password)) {
+                return $this->errorResponse('Invalid credentials', 401);
             }
 
             Auth::login($user);
@@ -45,10 +46,9 @@ class LoginService
             $user->last_login_at = now();
             $user->save();
 
-            return response()->json([
-                'message' => 'Login successful',
+            return $this->successResponse([
                 'token' => $token
-            ], Response::HTTP_OK);
+            ], 'Login successful', 200);
             
         } catch (\Throwable $th) {
             return $this->errorResponse(

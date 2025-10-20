@@ -24,14 +24,14 @@ return new class extends Migration
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
+            $table->integer('token');
+            $table->timestamps();
         });
 
         Schema::create('email_verification_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
+            $table->integer('token');
+            $table->timestamps();
         });
 
         Schema::create('sessions', function (Blueprint $table) {
