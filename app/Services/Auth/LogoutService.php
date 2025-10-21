@@ -21,12 +21,7 @@ class LogoutService
             ], 'Logout successful', 200);
             
         } catch (\Throwable $th) {
-            return $this->errorResponse(
-                $th->getMessage(), 
-                422, 
-                $th->getTraceAsString(),
-                $th->getLine(), 
-                $th->getFile());
+            return $this->errorResponse($th->getMessage(), 422, $th->getTraceAsString(), $th->getLine(), $th->getFile());
         }
     }
 }

@@ -18,17 +18,17 @@ class VerifyEmailService
 
             $emailToken = EmailToken::where('token', $validated['token'])->first();
 
-            if(!$emailToken) {
+            if (!$emailToken) {
                 return $this->errorResponse('Invalid token.', 401);
             }
 
             $user = User::where('email', $emailToken->email)->first();
 
-            if(!$user) {
+            if (!$user) {
                 return $this->errorResponse('User not found.', 404);
             }
 
-            if($user->email_verified_at) {
+            if ($user->email_verified_at) {
                 return $this->errorResponse('Email already verified.', 400);
             }
 
@@ -44,12 +44,7 @@ class VerifyEmailService
             );
 
         } catch (\Throwable $th) {
-            return $this->errorResponse(
-                $th->getMessage(), 
-                422, 
-                $th->getTraceAsString(),
-                $th->getLine(), 
-                $th->getFile());
+            return $this->errorResponse($th->getMessage(), 422, $th->getTraceAsString(), $th->getLine(), $th->getFile());
         }
     }
 }

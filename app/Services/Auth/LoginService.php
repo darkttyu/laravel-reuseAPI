@@ -23,7 +23,6 @@ class LoginService
     public function login(LoginRequest $request)
     {
         try {
-
             $validated = $request->validated();
 
             $user = User::query()->where('email', $validated['email'])->first();
@@ -51,12 +50,7 @@ class LoginService
             ], 'Login successful', 200);
             
         } catch (\Throwable $th) {
-            return $this->errorResponse(
-                $th->getMessage(), 
-                422, 
-                $th->getTraceAsString(),
-                $th->getLine(), 
-                $th->getFile());
+            return $this->errorResponse($th->getMessage(), 422, $th->getTraceAsString(), $th->getLine(), $th->getFile());
         }
 
     }
