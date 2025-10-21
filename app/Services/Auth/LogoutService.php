@@ -16,9 +16,7 @@ class LogoutService
         try {
             $request->user()->currentAccessToken()->delete();
 
-            return $this->successResponse([
-                'message' => 'Logged out successfully.'
-            ], 'Logout successful', 200);
+            return $this->successResponse([], 'Logout successful.', 200);
             
         } catch (\Throwable $th) {
             return $this->errorResponse($th->getMessage(), 422, $th->getTraceAsString(), $th->getLine(), $th->getFile());

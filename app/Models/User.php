@@ -46,4 +46,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function sendPasswordResetNotification($token)
+    {
+        \Log::info("Password reset token for {$this->email}: {$token}");
+    }
+    
 }

@@ -2,11 +2,9 @@
 
 namespace App\Services\Auth;
 
-use App\Models\User;
-use App\Models\PasswordResetToken;
 use App\Traits\ApiResponse;
 use App\Http\Requests\Auth\ForgotPasswordRequest;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Password;
 
 class ForgotPasswordService
 {
@@ -17,19 +15,37 @@ class ForgotPasswordService
         try {
             $validated = $request->validated();
 
-            $user = User::query()->where('email', $validated['email'])->first();
+            /**
+             * For testing purposes, we are using the Password facade to send the reset link.
+             * At the moment, we are storing the token in the laravel.log file
+             * The token is stored in the following format:
+             * [2025-10-22 10:00:00] local.INFO: Password reset token for test@example.com: [token]  
+             * TODO: Implement the Mail facade to send the reset link.
+             */
 
-            if (!$user) {
-                return $this->errorResponse('User not found.', 404);
+            /** @var \Illuminate\Http\Request $request */
+            $status = Password::sendResetLink(
+                $request->only('email')
+            );
+
+            if ($status === Password::RESET_LINK_SENT) {
+                return $this->successResponse([], 'Reset link sent successfully.', 200);
             }
 
-            $token = Str::random(64);
+            return $this->successResponse(
+                ['message' => 'If the email exists, a reset link has been sent.'],
+                'Password reset requested',
+                200
+            );
 
-            PasswordResetToken::create([
-                'email' => $validated['email'],
-                'token' => $token]);
         } catch (\Throwable $th) {
-            return $this->errorResponse($th->getMessage(), 422, $th->getTraceAsString(), $th->getLine(), $th->getFile());
+            return $this->errorResponse(
+                $th->getMessage(),
+                422,
+                $th->getTraceAsString(),
+                $th->getLine(),
+                $th->getFile()
+            );
         }
     }
 }

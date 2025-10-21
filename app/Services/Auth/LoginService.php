@@ -27,19 +27,23 @@ class LoginService
 
             $user = User::query()->where('email', $validated['email'])->first();
 
-            if(!$user) {
+            if (!$user) {
                 return $this->errorResponse('User not Found.', 404);
             }
 
-            if($user->email_verified_at == null) {
+            if ($user->email_verified_at == null) {
                 return $this->errorResponse('Email not verified.', 401);
             }
 
-            if(!Hash::check($validated['password'] . $this->salt, $user->password)) {
+            if (!Hash::check($validated['password'] . $this->salt, $user->password)) {
                 return $this->errorResponse('Invalid credentials', 401);
             }
 
-            Auth::login($user);
+            /**
+             * For token based authentication, we are using the createToken method to generate a token.
+             * Commented Auth::login($user) for now since we are using token based authentication.
+             */
+            // Auth::login($user);
             $token = $user->createToken('user_token')->plainTextToken;
 
             $user->last_login_at = now();

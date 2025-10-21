@@ -37,14 +37,9 @@ class VerifyEmailService
 
             $emailToken->delete();
 
-            return $this->successResponse([
-                'message' => 'Email verified successfully.'],
-                'Email verification successful',
-                200
-            );
-
+            return $this->successResponse([], 'Email verification successful.', 200);
         } catch (\Throwable $th) {
-            return $this->errorResponse($th->getMessage(), 422, $th->getTraceAsString(), $th->getLine(), $th->getFile());
+            $this->errorResponse($th->getMessage(), 422, $th->getTraceAsString(), $th->getLine(), $th->getFile());
         }
     }
 }

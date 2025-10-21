@@ -44,7 +44,6 @@ class RegisterService
             return $this->successResponse([
                 'user' => $registeredUser->id,
                 'email_token' => $emailToken->token,
-                'message' => 'User created successfully.'
             ], 'User Creation Successful.', 200);
 
         } catch (\Throwable $th) {
