@@ -15,3 +15,10 @@ Route::prefix('auth')->group(function () {
         Route::post('logout', [AuthController::class, 'logout'])->name('auth.logout');
     });
 });
+
+/**
+ * Example usage of permission and roles middleware
+ */
+//  Route::middleware(['role:admin', 'permission:view_users'])->group(function () {
+//     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+//  });
