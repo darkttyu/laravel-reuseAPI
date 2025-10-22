@@ -18,6 +18,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         ]);
+
+        // Applies rate limiter to all API routes
+        $middleware->api(prepend: [
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            'throttle:api',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
