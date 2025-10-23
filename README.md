@@ -3,13 +3,13 @@
 A Laravel 12 API boilerplate with token auth via Sanctum and authorization via Spatie Permissions.
 
 ## Features
-- ✅ Complete authentication system (register, login, email verification, password reset)
-- ✅ Token-based auth with Laravel Sanctum
-- ✅ Role-based permissions with Spatie Laravel Permission
-- ✅ API rate limiting
-- ✅ Swagger/OpenAPI documentation
-- ✅ Feature tests
-- ✅ Health check endpoint
+- Complete authentication system (register, login, email verification, password reset)
+- Token-based auth with Laravel Sanctum
+- Role-based permissions with Spatie Laravel Permission
+- API rate limiting
+- Swagger/OpenAPI documentation
+- Feature tests
+- Health check endpoint
 
 ## Requirements
 - PHP 8.2+
@@ -68,7 +68,7 @@ All endpoints are documented in the interactive Swagger UI at `/api/documentatio
 - `POST /api/v1/auth/reset-password` - Reset password with token
 - `GET /up` - Health check endpoint
 
-**Note:** All request/response examples, validation rules, and interactive testing are available in the Swagger documentation via `http://localhost:8000/api/documentation` after you do ```bash php artisan serve```
+**Note:** All request/response examples, validation rules, and interactive testing are available in the Swagger documentation.
 
 ## Roles and Permissions (Spatie)
 Create roles and permissions:
