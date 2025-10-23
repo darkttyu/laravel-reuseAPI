@@ -2,11 +2,20 @@
 
 A Laravel 12 API boilerplate with token auth via Sanctum and authorization via Spatie Permissions.
 
+## Features
+- ✅ Complete authentication system (register, login, email verification, password reset)
+- ✅ Token-based auth with Laravel Sanctum
+- ✅ Role-based permissions with Spatie Laravel Permission
+- ✅ API rate limiting
+- ✅ Swagger/OpenAPI documentation
+- ✅ Feature tests
+- ✅ Health check endpoint
+
 ## Requirements
 - PHP 8.2+
 - Laravel 12.x
 - Composer 2.8+
-- Database (PostgreSQL via DBeaver)
+- Database (PostgreSQL recommended)
 
 ## Installation
 ```bash
@@ -33,66 +42,33 @@ php artisan roles:create
 php artisan permissions:create
 ```
 
+Generate Swagger documentation:
+```bash
+php artisan l5-swagger:generate
+```
+
+## API Documentation
+
+Interactive API documentation is available via Swagger UI:
+
+**URL:** `http://localhost:8000/api/documentation`
+
+The documentation includes all endpoints with request/response examples and the ability to test endpoints directly from the browser.
+
 ## API Endpoints
-All endpoints are under `/api/auth` per `routes/api.php`.
 
-- POST `/api/auth/register`
-- POST `/api/auth/login`
-- POST `/api/auth/verify-email`
-- POST `/api/auth/forgot-password`
-- POST `/api/auth/reset-password`
-- POST `/api/auth/logout` (requires `auth:sanctum`)
+All endpoints are documented in the interactive Swagger UI at `/api/documentation`.
 
-### Auth: Requests and examples
+**Quick Overview:**
+- `POST /api/v1/auth/register` - Create new user account
+- `POST /api/v1/auth/verify-email` - Verify email with token
+- `POST /api/v1/auth/login` - Login and receive authentication token
+- `POST /api/v1/auth/logout` - Revoke current token (requires auth)
+- `POST /api/v1/auth/forgot-password` - Request password reset
+- `POST /api/v1/auth/reset-password` - Reset password with token
+- `GET /up` - Health check endpoint
 
-Register
-- Body: `{ "name": "John Doe", "email": "john@example.com", "password": "secret123" }`
-- Response: includes `email_token` (for demo, normally emailed)
-```bash
-curl -X POST http://localhost:8000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"name":"John Doe","email":"john@example.com","password":"secret123"}'
-```
-
-Verify Email
-- Body: `{ "token": 123456 }`
-```bash
-curl -X POST http://localhost:8000/api/auth/verify-email \
-  -H "Content-Type: application/json" \
-  -d '{"token":123456}'
-```
-
-Login
-- Body: `{ "email": "john@example.com", "password": "secret123" }`
-- Response: `{ "token": "<sanctum_token>" }`
-- Note: login requires the email to be verified first.
-```bash
-curl -X POST http://localhost:8000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"john@example.com","password":"secret123"}'
-```
-
-Authenticated requests
-- Include: `Authorization: Bearer <token>`
-
-Logout
-```bash
-curl -X POST http://localhost:8000/api/auth/logout \
-  -H "Authorization: Bearer <token>"
-```
-
-Forgot Password
-- Body: `{ "email": "john@example.com" }`
-
-Reset Password
-- Body: `{ "old_password": "secret123", "new_password": "newSecret123", "token": "<reset_token>" }`
-
-Validation rules
-- Register: name (required), email (email, unique), password (min:8)
-- Login: email (email), password (min:8)
-- Verify Email: token (integer)
-- Forgot Password: email (email)
-- Reset Password: old_password (min:8), new_password (min:8), token (string)
+**Note:** All request/response examples, validation rules, and interactive testing are available in the Swagger documentation via `http://localhost:8000/api/documentation` after you do ```bash php artisan serve```
 
 ## Roles and Permissions (Spatie)
 Create roles and permissions:
@@ -109,9 +85,33 @@ Route::middleware(['auth:sanctum', 'role:admin', 'permission:view_users'])->grou
 });
 ```
 
-Notes
+## Rate Limiting
+
+The API includes rate limiting to prevent abuse:
+- **Auth endpoints:** 20 requests per minute per IP
+- **General API endpoints:** 60 requests per minute per user/IP
+
+When rate limit is exceeded, you'll receive a `429 Too Many Requests` response with retry information.
+
+## Testing
+
+Run the test suite:
+```bash
+php artisan test
+```
+
+## Health Check
+
+Monitor your API status:
+```bash
+GET /up
+```
+Returns `200 OK` when the application is running.
+
+## Notes
 - Password hashing in this project concatenates `SALT` from `.env` before hashing.
 - Email verification currently returns a numeric token in the API response (you should wire a mailer in production).
+- Reset password tokens are logged to `storage/logs/laravel.log` for testing (implement email in production).
 - Comments are provided in specific files so that you won't get lost when making customizations.
 
 ## Contributing
