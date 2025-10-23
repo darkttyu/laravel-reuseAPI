@@ -48,8 +48,8 @@ class CreatePermissions extends Command
         }
 
         // Assigning Permission to Roles
-        $adminRole = Role::findByName('name');
-        $userRole = Role::findByName('name');
+        $adminRole = Role::findByName('admin');
+        $userRole = Role::findByName('user');
 
         /**
          * Assigning roles to permissions via the syncPermissions method
