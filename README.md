@@ -10,6 +10,7 @@ A Laravel 12 API boilerplate with token auth via Sanctum and authorization via S
 - Swagger/OpenAPI documentation
 - Feature tests
 - Health check endpoint
+- CI Workflow with GitHub Actions 
 
 ## Requirements
 - PHP 8.2+

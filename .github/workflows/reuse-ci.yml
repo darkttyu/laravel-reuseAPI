@@ -1,4 +1,4 @@
-name: Laravel CI
+name: Laravel reuseAPI CI
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  laravel-tests:
+  workflow-test:
     runs-on: ubuntu-latest
 
     # Add PostgreSQL service
