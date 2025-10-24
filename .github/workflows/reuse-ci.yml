@@ -1,15 +1,16 @@
-name: Laravel CI & Validation
+name: Laravel CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
-  laravel-ci:
+  laravel-tests:
     runs-on: ubuntu-latest
 
+    # Add PostgreSQL service
     services:
       postgres:
         image: postgres:15
@@ -25,30 +26,35 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    strategy:
-      matrix:
-        php-version: ['8.2', '8.3']
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Setup PHP ${{ matrix.php-version }}
-      uses: shivammathur/setup-php@v2
+    # Setup PHP (use a specific version that matches your requirements)
+    - uses: shivammathur/setup-php@v2
       with:
-        php-version: ${{ matrix.php-version }}
-        extensions: mbstring, bcmath, intl, pdo_pgsql
-        coverage: none
-
-    - name: Install Composer dependencies
-      run: composer install --no-progress
-
-    - name: Setup environment
+        php-version: '8.2'
+        extensions: mbstring, bcmath, pdo_pgsql
+        
+    # Checkout code
+    - uses: actions/checkout@v4
+    
+    # Copy .env file
+    - name: Copy .env
+      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      
+    # Install dependencies
+    - name: Install Dependencies
+      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      
+    # Generate app key
+    - name: Generate key
+      run: php artisan key:generate
+      
+    # Set directory permissions
+    - name: Directory Permissions
+      run: chmod -R 777 storage bootstrap/cache
+      
+    # Configure database in env
+    - name: Configure Database
       run: |
-        cp .env.example .env
-        php artisan key:generate
-
-        echo "" >> .env
         echo "DB_CONNECTION=pgsql" >> .env
         echo "DB_HOST=localhost" >> .env
         echo "DB_PORT=5432" >> .env
@@ -56,11 +62,21 @@ jobs:
         echo "DB_USERNAME=postgres" >> .env
         echo "DB_PASSWORD=postgres" >> .env
         echo "SALT=ci-testing-salt" >> .env
-
-    - name: Run database migrations and seed
+      
+    # Run migrations
+    - name: Run migrations
+      run: php artisan migrate --force
+      
+    # Create roles and permissions
+    - name: Setup roles and permissions
       run: |
-        php artisan migrate --force
         php artisan roles:create
         php artisan permissions:create
-
-    # Rest of your workflow remains the same
+      
+    # Run tests
+    - name: Execute tests
+      run: php artisan test
+      
+    # Generate API docs
+    - name: Generate API documentation
+      run: php artisan l5-swagger:generate
