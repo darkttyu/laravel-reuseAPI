@@ -47,12 +47,15 @@ jobs:
       run: |
         cp .env.example .env
         php artisan key:generate
+
+        echo "" >> .env
         echo "DB_CONNECTION=pgsql" >> .env
         echo "DB_HOST=localhost" >> .env
         echo "DB_PORT=5432" >> .env
         echo "DB_DATABASE=laravel_test" >> .env
         echo "DB_USERNAME=postgres" >> .env
         echo "DB_PASSWORD=postgres" >> .env
+        echo "SALT=ci-testing-salt" >> .env
 
     - name: Run database migrations and seed
       run: |
