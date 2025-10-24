@@ -108,6 +108,11 @@ GET /up
 ```
 Returns `200 OK` when the application is running.
 
+## GitHub Actions
+
+![Laravel CI & Validation](https://github.com/darkttyu/laravel-reuseAPI/actions/workflows/laravel-ci.yml/badge.svg)
+
+
 ## Notes
 - Password hashing in this project concatenates `SALT` from `.env` before hashing.
 - Email verification currently returns a numeric token in the API response (you should wire a mailer in production).

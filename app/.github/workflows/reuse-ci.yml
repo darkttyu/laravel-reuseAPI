@@ -1,0 +1,64 @@
+# This is a template for a GitHub Actions workflow to test and validate a Laravel application.
+name: Laravel CI & Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  laravel-ci:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        php-version: ['8.2', '8.3']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Setup PHP ${{ matrix.php-version }}
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-version }}
+        extensions: mbstring, bcmath, intl, pdo_mysql
+        coverage: none
+
+    - name: Install Composer dependencies
+      run: composer install --no-progress
+
+    - name: Setup environment
+      run: |
+        cp .env.example .env
+        php artisan key:generate
+
+    - name: Run database migrations and seed
+      run: |
+        php artisan migrate --force
+        php artisan roles:create
+        php artisan permissions:create
+
+    - name: Run automated tests
+      run: composer test
+
+    - name: Generate API documentation
+      run: php artisan l5-swagger:generate
+
+    - name: Verify app boots successfully (fresh install test)
+      run: |
+        # Install without dev dependencies to simulate production
+        rm -rf vendor composer.lock
+        composer install --no-dev --no-progress
+        cp .env.example .env
+        php artisan key:generate
+        php artisan migrate --force
+        php artisan roles:create
+        php artisan permissions:create
+
+    - name: Start Laravel server and verify endpoint
+      run: |
+        php artisan serve --host=127.0.0.1 --port=8000 &
+        sleep 5
+        curl -f http://127.0.0.1:8000/up
